@@ -10,6 +10,12 @@ from dataclasses import dataclass
 from src.components.data_transformation import DataTransformation
 from src.components.data_transformation import DataTransformationConfig
 
+from src.components.model_trainer import ModelTrainerConfig
+from src.components.model_trainer import ModelTrainer
+
+from src.utils import evaluate_models
+
+
 @dataclass
 class DataIngestionConfig:
     """
@@ -35,8 +41,8 @@ class DataIngestion:
         try:
             
             # Read the data from the given path
-            df = pd.read_csv(data_path)
             df = pd.read_csv('notebook/data/Stud.csv')
+
  
             # Check if the DataFrame is empty
             if df.empty:
@@ -71,6 +77,15 @@ class DataIngestion:
 
 if __name__ == "__main__":
     obj = DataIngestion()
-    train_data, test_data = obj.initiate_data_ingestion('notebook/data/Stud.csv')
+    
+    train_data, test_data = obj.initiate_data_ingestion(data_path='notebook/data/Stud.csv')
+    
     data_transformation = DataTransformation()
-    data_transformation.initiate_data_transformation(train_data, test_data)
+    train_arr, test_arr, _ = data_transformation.initiate_data_transformation(train_data, test_data)
+
+    # Extract features and labels from train and test arrays
+    X_train, y_train = train_arr[:, :-1], train_arr[:, -1]
+    X_test, y_test = test_arr[:, :-1], test_arr[:, -1]
+
+    modeltrainer = ModelTrainer()
+    print(modeltrainer.initiate_model_trainer(train_arr, test_arr))

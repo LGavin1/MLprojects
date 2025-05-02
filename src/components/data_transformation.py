@@ -34,10 +34,10 @@ class DataTransformation:
         It uses the ColumnTransformer to apply different transformations to different columns.
         """
         try:
-            numerical_features = ['writing_score', 'reading_score']
+            numerical_features = ['writing score', 'reading score']
             # Categorical features
             categorical_features = [
-                "gender"
+                "gender",
                 "race/ethnicity",
                 "parental level of education",
                 "lunch",
@@ -88,13 +88,13 @@ class DataTransformation:
             preprocessor_obj = self.get_data_transformer_object()
 
             target_column = 'math score'
-            numerical_columns = ['writing_score', 'reading_score']
+            numerical_columns = ['writing score', 'reading score']
             
             input_features_train = train_df.drop(columns=[target_column], axis=1)
             target_feature_train = train_df[target_column]
 
             input_features_test = test_df.drop(columns=[target_column], axis=1)
-            target_feature_test = test_df[target_column]
+            target_features_test = test_df[target_column]
 
             logging.info(
                 f"Applying preprocessing object on training and testing dataframes"
@@ -104,7 +104,7 @@ class DataTransformation:
             input_features_test_arr= preprocessor_obj.transform(input_features_test)
 
             train_arr = np.c_[input_features_train_arr, np.array(target_feature_train)]
-            test_arr = np.c_[input_features_test_arr, np.array(target_feature_test)]
+            test_arr = np.c_[input_features_test_arr, np.array(target_features_test)]
 
             logging.info(f"Preprocessing object completed")
 
@@ -125,5 +125,5 @@ class DataTransformation:
 
 
 
-        except:
-            pass    
+        except Exception as e:
+            raise CustomException(e, sys)
