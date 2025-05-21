@@ -13,8 +13,6 @@ from src.components.data_transformation import DataTransformationConfig
 from src.components.model_trainer import ModelTrainerConfig
 from src.components.model_trainer import ModelTrainer
 
-from src.utils import evaluate_models
-
 
 @dataclass
 class DataIngestionConfig:
@@ -33,17 +31,12 @@ class DataIngestion:
     def __init__(self):
         self.ingestion_config= DataIngestionConfig()
 
-    def initiate_data_ingestion(self, data_path: str) -> None:
-        logging.info("Data Ingestion method starts")
-        """
-        Initiate Data Ingestion Process
-        """
+    def initiate_data_ingestion(self):
+        logging.info("Entered the data ingestion method or component")
         try:
-            
             # Read the data from the given path
             df = pd.read_csv('notebook/data/Stud.csv')
 
- 
             # Check if the DataFrame is empty
             if df.empty:
                 raise ValueError("The DataFrame is empty. Please check the input data.")
@@ -53,12 +46,10 @@ class DataIngestion:
 
             # Save the raw data to the specified path
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
-
             logging.info("Train test split initiated")
 
-
             # Split the data into train and test sets
-            train_set, test_set = train_test_split(df, test_size=self.ingestion_config.split_ratio, random_state=42)
+            train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
             
             # Save the train and test sets to the specified paths
             train_set.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
@@ -71,21 +62,16 @@ class DataIngestion:
                 self.ingestion_config.train_data_path, 
                 self.ingestion_config.test_data_path 
             )
-
         except Exception as e:
             raise CustomException(e, sys)
 
 if __name__ == "__main__":
     obj = DataIngestion()
     
-    train_data, test_data = obj.initiate_data_ingestion(data_path='notebook/data/Stud.csv')
+    train_data, test_data = obj.initiate_data_ingestion()
     
     data_transformation = DataTransformation()
-    train_arr, test_arr, _ = data_transformation.initiate_data_transformation(train_data, test_data)
-
-    # Extract features and labels from train and test arrays
-    X_train, y_train = train_arr[:, :-1], train_arr[:, -1]
-    X_test, y_test = test_arr[:, :-1], test_arr[:, -1]
+    train_arr, test_arr, extra = data_transformation.initiate_data_transformation(train_data, test_data)
 
     modeltrainer = ModelTrainer()
     print(modeltrainer.initiate_model_trainer(train_arr, test_arr))

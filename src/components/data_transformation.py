@@ -45,16 +45,16 @@ class DataTransformation:
             ]
             num_pipeline = Pipeline(
                 steps=[
-                    ('imputer', SimpleImputer(strategy='median')),
-                    ('scaler', StandardScaler())
+                    ("imputer", SimpleImputer(strategy='median')),
+                    ("scaler", StandardScaler())
                 ]
             )
             cat_pipeline = Pipeline(
                 steps=
                     [
-                        ('imputer', SimpleImputer(strategy='most_frequent')),
-                        ('onehot', OneHotEncoder(handle_unknown='ignore')),
-                        ('scaler', StandardScaler(with_mean=False))
+                        ("imputer", SimpleImputer(strategy='most_frequent')),
+                        ("onehot", OneHotEncoder(handle_unknown='ignore')),
+                        ("scaler", StandardScaler(with_mean=False))
                     ]
             )
             
@@ -64,8 +64,8 @@ class DataTransformation:
           
             preprocessor = ColumnTransformer(
                 [
-                    ('num_pipeline', num_pipeline, numerical_features),
-                    ('cat_pipeline', cat_pipeline, categorical_features)
+                    ("num_pipeline", num_pipeline, numerical_features),
+                    ("cat_pipeline", cat_pipeline, categorical_features)
                 ]
             )
             return preprocessor
@@ -90,21 +90,23 @@ class DataTransformation:
             target_column = 'math score'
             numerical_columns = ['writing score', 'reading score']
             
-            input_features_train = train_df.drop(columns=[target_column], axis=1)
-            target_feature_train = train_df[target_column]
+            input_features_train_df = train_df.drop(columns=[target_column], axis=1)
+            target_feature_train_df = train_df[target_column]
 
-            input_features_test = test_df.drop(columns=[target_column], axis=1)
-            target_features_test = test_df[target_column]
+            input_features_test_df = test_df.drop(columns=[target_column], axis=1)
+            target_features_test_df = test_df[target_column]
 
             logging.info(
                 f"Applying preprocessing object on training and testing dataframes"
                 )
             
-            input_features_train_arr= preprocessor_obj.fit_transform(input_features_train)
-            input_features_test_arr= preprocessor_obj.transform(input_features_test)
+            input_features_train_arr= preprocessor_obj.fit_transform(input_features_train_df)
+            input_features_test_arr= preprocessor_obj.transform(input_features_test_df)
 
-            train_arr = np.c_[input_features_train_arr, np.array(target_feature_train)]
-            test_arr = np.c_[input_features_test_arr, np.array(target_features_test)]
+            train_arr = np.c_[
+                input_features_train_arr, np.array(target_feature_train_df)
+                ]
+            test_arr = np.c_[input_features_test_arr, np.array(target_features_test_df)]
 
             logging.info(f"Preprocessing object completed")
 
