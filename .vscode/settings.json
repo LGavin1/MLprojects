@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./Lib/site-packages/dill/_"
+        "./Lib/site-packages/dill/_",
+        "./Lib/site-packages",
+        "./Lib/site-packages"
     ]
 }
